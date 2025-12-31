@@ -51,7 +51,7 @@ export default function SplashPage() {
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 className="text-center text-[22px] font-light tracking-[0.15em] text-[#0a0a0a]"
               >
-                Menu Hub
+                壹餐
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
@@ -139,7 +139,7 @@ function BrandLogo() {
         transition={{ delay: 0.8, duration: 0.4 }}
         className="absolute inset-0 flex items-center justify-center"
       >
-        <span className="text-[36px] font-light text-[#0a0a0a]">M</span>
+        <span className="text-[32px] font-light text-[#0a0a0a]">壹</span>
       </motion.div>
     </div>
   )

@@ -4,8 +4,18 @@ import { ToastProvider } from '@/components/ui'
 import { AuthProvider } from '@/components/providers'
 
 export const metadata: Metadata = {
-  title: 'CoupleMenu - 我俩吃啥',
-  description: '情侣专属点菜应用',
+  title: '壹餐 - 两人·菜单·日常',
+  description: '两人 · 菜单 · 日常',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: '壹餐',
+  },
+  icons: {
+    icon: '/icons/icon-192.png',
+    apple: '/icons/icon-192.png',
+  },
 }
 
 export const viewport: Viewport = {
