@@ -5,17 +5,18 @@ import { motion, HTMLMotionProps } from 'framer-motion'
 import { cn } from '@/lib/utils/cn'
 
 interface ButtonProps extends HTMLMotionProps<'button'> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'outline'
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outline' | 'danger'
   size?: 'sm' | 'md' | 'lg'
   loading?: boolean
   fullWidth?: boolean
 }
 
 const variants = {
-  primary: 'bg-foreground text-white active:bg-gray-900',
-  secondary: 'bg-surface text-foreground active:bg-background-tertiary',
-  ghost: 'bg-transparent text-foreground active:bg-surface',
-  outline: 'bg-transparent border border-border text-foreground active:border-foreground active:bg-surface',
+  primary: 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700',
+  secondary: 'bg-neutral-100 text-neutral-900 hover:bg-neutral-200 active:bg-neutral-300',
+  ghost: 'bg-transparent text-neutral-900 hover:bg-neutral-100 active:bg-neutral-200',
+  outline: 'bg-transparent border border-neutral-300 text-neutral-900 hover:bg-neutral-50 active:bg-neutral-100',
+  danger: 'bg-error-500 text-white hover:bg-error-600 active:bg-error-600',
 }
 
 const sizes = {
@@ -32,7 +33,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         whileTap={{ scale: 0.97 }}
         className={cn(
           'inline-flex items-center justify-center font-medium transition-all',
-          'focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2',
+          'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
           'disabled:opacity-50 disabled:pointer-events-none',
           variants[variant],
           sizes[size],

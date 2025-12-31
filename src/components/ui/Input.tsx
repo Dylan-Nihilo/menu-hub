@@ -22,7 +22,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             'w-full h-12 px-4 bg-gray-50 rounded-xl',
             'text-base outline-none',
             'placeholder:text-gray-400',
-            'focus:bg-white focus:ring-2 focus:ring-black',
+            'focus:bg-white focus:ring-2 focus:ring-primary-500',
             'transition-all',
             className
           )}
