@@ -1,0 +1,239 @@
+
+> couple-menu@0.1.0 dev
+> next dev -H 0.0.0.0
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Network:      http://0.0.0.0:3000
+  - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Ready in 2.2s
+ ○ Compiling /recipes/new ...
+ ✓ Compiled /recipes/new in 2.2s (1335 modules)
+ GET /recipes/ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+ ⚠ Port 3000 is in use, trying 3001 instead.
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3001
+  - Network:      http://0.0.0.0:3001
+  - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Ready in 1578ms
+s
+ GET /api/menu?coupleId=cmjtkz8vc000iibd225423mid&date=2025-12-31 200 in 180ms
+ GET /api/menu?coupleId=cmjtkz8vc000iibd225423mid&date=2025-12-31 200 in 197ms
+ GET /api/menu?coupleId=cmjtkz8vc000iibd225423mid&date=2026-01-01 200 in 8ms
+ GET /api/recipes?coupleId=cmjtkz8vc000iibd225423mid 200 in 6ms
+ GET /api/menu?coupleId=cmjtkz8vc000iibd225423mid&date=2025-12-31 200 in 7ms
+ GET /api/recipes?coupleId=cmjtkz8vc000iibd225423mid 200 in 7ms
+ GET /api/menu?coupleId=cmjtkz8vc000iibd225423mid&date=2026-01-01 200 in 6ms
+ GET /api/recipes?coupleId=cmjtkz8vc000iibd225423mid 200 in 6ms
+ GET /api/menu?coupleId=cmjtkz8vc000iibd225423mid&date=2026-01-02 200 in 5ms
+ GET /api/recipes?coupleId=cmjtkz8vc000iibd225423mid 200 in 6ms
+ GET /api/menu?coupleId=cmjtkz8vc000iibd225423mid&date=2025-12-31 200 in 5ms
+ GET /api/recipes?coupleId=cmjtkz8vc000iibd225423mid 200 in 6ms
+ ✓ Compiled in 405ms (1381 modules)
+ GET /api/menu?coupleId=cmjtkz8vc000iibd225423mid&date=2025-12-31 200 in 10ms
+ GET /api/recipes?coupleId=cmjtkz8vc000iibd225423mid 200 in 11ms
+ ✓ Compiled in 206ms (1393 modules)
+ GET /api/menu?coupleId=cmjtkz8vc000iibd225423mid&date=2025-12-31 200 in 8ms
+ GET /api/recipes?coupleId=cmjtkz8vc000iibd225423mid 200 in 10ms
+ ✓ Compiled in 186ms (1393 modules)
+ GET /api/menu?coupleId=cmjtkz8vc000iibd225423mid&date=2025-12-31 200 in 6ms
+ GET /api/recipes?coupleId=cmjtkz8vc000iibd225423mid 200 in 7ms
+ ✓ Compiled /recipes in 391ms (1389 modules)
+ ⨯ Error: Cannot find module './276.js'
+Require stack:
+- /Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js
+- /Users/dylanthomas/Desktop/projects/menu-app/.next/server/app/(main)/recipes/page.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/load-components.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/utils.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/router-server.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (/Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js:203:28)
+    at /Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js:116:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js:115:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js:167:22)
+    at /Users/dylanthomas/Desktop/projects/menu-app/.next/server/app/api/recipes/route.js:1:1509
+    at Object.<anonymous> (/Users/dylanthomas/Desktop/projects/menu-app/.next/server/app/api/recipes/route.js:1:1554)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require.js:109:84)
+    at /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/load-components.js:103:84
+    at async loadComponentsImpl (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/next-server.js:714:36)
+    at async DevServer.findPageComponents (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderPageComponent (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/base-server.js:1910:24)
+    at async DevServer.renderToResponseImpl (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/base-server.js:818:17)
+    at async /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async requestHandlerImpl (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/.next/server/app/(main)/recipes/page.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/load-components.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/utils.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/router-server.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/start-server.js'
+  ],
+  page: '/api/recipes'
+}
+ ⨯ Error: Cannot find module './276.js'
+Require stack:
+- /Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js
+- /Users/dylanthomas/Desktop/projects/menu-app/.next/server/app/(main)/recipes/page.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/load-components.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/utils.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/router-server.js
+- /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (/Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js:203:28)
+    at /Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js:116:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (/Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js:115:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (/Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js:167:22)
+    at /Users/dylanthomas/Desktop/projects/menu-app/.next/server/app/api/recipes/route.js:1:1509
+    at Object.<anonymous> (/Users/dylanthomas/Desktop/projects/menu-app/.next/server/app/api/recipes/route.js:1:1554)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require.js:109:84)
+    at /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/load-components.js:103:84
+    at async loadComponentsImpl (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/next-server.js:714:36)
+    at async DevServer.findPageComponents (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderPageComponent (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/base-server.js:1910:24)
+    at async DevServer.renderToResponseImpl (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/base-server.js:818:17)
+    at async /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async requestHandlerImpl (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/.next/server/app/(main)/recipes/page.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/load-components.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/utils.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/dev/hot-middleware.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/dev/hot-reloader-webpack.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/router-server.js',
+    '/Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/lib/start-server.js'
+  ],
+  page: '/api/recipes'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 581ms (1616 modules)
+ GET /api/recipes?coupleId=cmjtkz8vc000iibd225423mid 500 in 673ms
+ GET /api/recipes?coupleId=cmjtkz8vc000iibd225423mid 500 in 673ms
+ ✓ Compiled /_not-found in 96ms (1619 modules)
+ GET /_next/static/css/app/layout.css?v=1767164016868 404 in 160ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/dylanthomas/Desktop/projects/menu-app/.next/server/vendor-chunks/clsx.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/clsx' in /Users/dylanthomas/Desktop/projects/menu-app/.next/server for build dependencies doesn't lead to expected result '/Users/dylanthomas/Desktop/projects/menu-app/.next/server/vendor-chunks/clsx.js', but to 'Error: Can't resolve './vendor-chunks/clsx' in '/Users/dylanthomas/Desktop/projects/menu-app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/clsx (expected /Users/dylanthomas/Desktop/projects/menu-app/.next/server/vendor-chunks/clsx.js)
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/.next/server/app/_not-found/page.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/.next/server/app/_not-found/page.js
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/utils.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/motion-utils' in /Users/dylanthomas/Desktop/projects/menu-app/.next/server for build dependencies doesn't lead to expected result '/Users/dylanthomas/Desktop/projects/menu-app/.next/server/vendor-chunks/motion-utils.js', but to 'Error: Can't resolve './vendor-chunks/motion-utils' in '/Users/dylanthomas/Desktop/projects/menu-app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/motion-utils (expected /Users/dylanthomas/Desktop/projects/menu-app/.next/server/vendor-chunks/motion-utils.js)
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/.next/server/app/_not-found/page.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/.next/server/app/_not-found/page.js
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/utils.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/zustand' in /Users/dylanthomas/Desktop/projects/menu-app/.next/server for build dependencies doesn't lead to expected result '/Users/dylanthomas/Desktop/projects/menu-app/.next/server/vendor-chunks/zustand.js', but to 'Error: Can't resolve './vendor-chunks/zustand' in '/Users/dylanthomas/Desktop/projects/menu-app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/zustand (expected /Users/dylanthomas/Desktop/projects/menu-app/.next/server/vendor-chunks/zustand.js)
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/.next/server/app/_not-found/page.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/.next/server/app/_not-found/page.js
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/utils.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/dylanthomas/Desktop/projects/menu-app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js

@@ -139,7 +139,7 @@ function BrandLogo() {
         transition={{ delay: 0.8, duration: 0.4 }}
         className="absolute inset-0 flex items-center justify-center"
       >
-        <span className="text-[32px] font-light text-[#0a0a0a]">壹</span>
+        <span className="text-[36px] font-light text-[#0a0a0a]">M</span>
       </motion.div>
     </div>
   )
