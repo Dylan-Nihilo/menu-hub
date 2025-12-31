@@ -98,8 +98,8 @@ export default function HomePage() {
             </div>
           ) : menuItems.length === 0 ? (
             <div className="py-8 text-center">
-              <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#FFF5F5] to-[#FFE5E5] rounded-full flex items-center justify-center mb-4 shadow-sm">
-                <ChefHat className="w-10 h-10 text-[#FF6B6B]" />
+              <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#F5F5F5] to-[#EEEEEE] rounded-full flex items-center justify-center mb-4 shadow-sm">
+                <ChefHat className="w-10 h-10 text-[#0a0a0a]" />
               </div>
               <p className="text-[15px] font-medium text-[#0a0a0a]">今天还没点菜</p>
               <p className="text-[13px] text-[#a3a3a3] mt-1">和 TA 一起选择今天吃什么吧</p>
@@ -128,9 +128,9 @@ export default function HomePage() {
                           e.stopPropagation()
                           handleDeleteMenuItem(item.id)
                         }}
-                        className="p-1 hover:bg-red-50 rounded-lg"
+                        className="p-1 hover:bg-gray-100 rounded-lg"
                       >
-                        <Trash2 className="w-4 h-4 text-red-500" />
+                        <Trash2 className="w-4 h-4 text-gray-400" />
                       </motion.button>
                     )}
                   </div>
@@ -154,7 +154,7 @@ export default function HomePage() {
       >
         <Link
           href="/select"
-          className="flex items-center justify-center gap-2 w-full h-[48px] bg-[#FF6B6B] text-white rounded-xl text-[15px] font-medium active:scale-[0.98] transition-transform shadow-lg"
+          className="flex items-center justify-center gap-2 w-full h-[48px] bg-[#0a0a0a] text-white rounded-xl text-[15px] font-medium active:scale-[0.98] transition-transform shadow-lg"
         >
           <Plus className="w-5 h-5" />
           点菜

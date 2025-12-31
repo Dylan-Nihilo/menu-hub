@@ -54,7 +54,7 @@ export default function RecipesPage() {
       {/* 页面标题 */}
       <header className="px-6 pt-4 pb-2 flex items-center justify-between shrink-0">
         <h1 className="text-[28px] font-semibold text-[#0a0a0a]">菜谱</h1>
-        <Link href="/recipes/new" className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FF6B6B] text-white active:scale-95 transition-transform">
+        <Link href="/recipes/new" className="w-9 h-9 flex items-center justify-center rounded-full bg-[#0a0a0a] text-white active:scale-95 transition-transform">
           <Plus className="w-5 h-5" />
         </Link>
       </header>
@@ -68,7 +68,7 @@ export default function RecipesPage() {
             placeholder="搜索菜谱"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full h-10 pl-10 pr-10 bg-gray-50 rounded-xl text-[15px] outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+            className="w-full h-10 pl-10 pr-10 bg-gray-50 rounded-xl text-[15px] outline-none focus:ring-2 focus:ring-[#0a0a0a]"
           />
           {searchTerm && (
             <button onClick={() => setSearchTerm('')} className="absolute right-4 top-1/2 -translate-y-1/2">
@@ -87,7 +87,7 @@ export default function RecipesPage() {
               onClick={() => setActiveCategory(cat)}
               className={`shrink-0 px-4 h-8 rounded-full text-[13px] font-medium transition-all ${
                 activeCategory === cat
-                  ? 'bg-[#FF6B6B] text-white'
+                  ? 'bg-[#0a0a0a] text-white'
                   : 'bg-gray-100 text-[#666]'
               }`}
             >

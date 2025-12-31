@@ -65,7 +65,7 @@ export default function ShoppingListPage() {
           <h1 className="text-[28px] font-semibold text-[#0a0a0a]">买菜清单</h1>
           <button
             onClick={() => setShowAddModal(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FF6B6B] text-white active:scale-95 transition-transform"
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-[#0a0a0a] text-white active:scale-95 transition-transform"
           >
             <Plus className="w-5 h-5" />
           </button>
@@ -77,7 +77,7 @@ export default function ShoppingListPage() {
           {checkedCount > 0 && (
             <button
               onClick={clearCompleted}
-              className="text-[12px] text-[#FF6B6B] font-medium"
+              className="text-[12px] text-[#0a0a0a] font-medium"
             >
               清空已完成
             </button>
@@ -95,7 +95,7 @@ export default function ShoppingListPage() {
             className="mb-6"
           >
             <div className="flex items-center gap-2 mb-2 px-1">
-              <div className="w-1 h-4 bg-[#FF6B6B] rounded-full" />
+              <div className="w-1 h-4 bg-[#0a0a0a] rounded-full" />
               <h3 className="text-[13px] text-[#666] font-medium">{category}</h3>
               <span className="text-[12px] text-[#a3a3a3]">({list.length})</span>
             </div>
@@ -115,7 +115,7 @@ export default function ShoppingListPage() {
                   <div className="flex items-center gap-3">
                     <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all shrink-0
                       ${item.checked
-                        ? 'bg-[#FF6B6B] border-[#FF6B6B]'
+                        ? 'bg-[#0a0a0a] border-[#0a0a0a]'
                         : 'border-[#d4d4d4]'}
                     `}>
                       {item.checked && (
@@ -135,9 +135,9 @@ export default function ShoppingListPage() {
                         e.stopPropagation()
                         deleteItem(item.id)
                       }}
-                      className="p-1 hover:bg-red-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="p-1 hover:bg-gray-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      <Trash2 className="w-4 h-4 text-red-500" />
+                      <Trash2 className="w-4 h-4 text-gray-400" />
                     </button>
                   </div>
                 </motion.label>
@@ -202,7 +202,7 @@ export default function ShoppingListPage() {
 
                 <button
                   onClick={addItem}
-                  className="w-full h-12 bg-[#FF6B6B] text-white rounded-xl text-[15px] font-medium active:scale-[0.98] transition-transform"
+                  className="w-full h-12 bg-[#0a0a0a] text-white rounded-xl text-[15px] font-medium active:scale-[0.98] transition-transform"
                 >
                   添加
                 </button>

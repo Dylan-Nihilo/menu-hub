@@ -14,7 +14,7 @@ export default function ProfilePage() {
   const initials = user?.nickname?.slice(0, 2) || '?'
 
   const menuItems = [
-    { icon: Heart, label: '情侣空间', href: '/couple-space', color: 'text-red-500' },
+    { icon: Heart, label: '情侣空间', href: '/couple-space', color: 'text-red-400' },
     { icon: MessageSquare, label: '消息', href: '/messages', color: 'text-blue-500' },
     { icon: Settings, label: '设置', href: '/settings', color: 'text-gray-600' },
     { icon: HelpCircle, label: '帮助与反馈', href: '/help', color: 'text-orange-500' },
@@ -31,9 +31,9 @@ export default function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-4 p-4 mb-6 bg-gradient-to-br from-[#FFF5F5] to-[#FFE5E5] rounded-2xl"
+          className="flex items-center gap-4 p-4 mb-6 bg-gradient-to-br from-[#F5F5F5] to-[#EEEEEE] rounded-2xl"
         >
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#FF6B6B] to-[#FF5252] flex items-center justify-center text-xl font-bold text-white shadow-lg">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#0a0a0a] to-[#1A1A1A] flex items-center justify-center text-xl font-bold text-white shadow-lg">
             {initials}
           </div>
           <div className="flex-1">
@@ -75,7 +75,7 @@ export default function ProfilePage() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: menuItems.length * 0.05 }}
           onClick={signOut}
-          className="w-full flex items-center justify-center gap-2 p-4 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 active:scale-[0.98] transition-all font-medium"
+          className="w-full flex items-center justify-center gap-2 p-4 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 active:scale-[0.98] transition-all font-medium"
         >
           <LogOut className="w-5 h-5" />
           退出登录
