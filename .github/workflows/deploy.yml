@@ -80,6 +80,6 @@ jobs:
 
             # 拉取并启动
             docker pull ghcr.io/dylan-nihilo/menu-hub:latest
-            docker-compose down || true
-            docker-compose up -d
+            docker compose down || true
+            docker compose up -d
             docker image prune -f
