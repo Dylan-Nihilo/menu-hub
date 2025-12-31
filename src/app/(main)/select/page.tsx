@@ -1,24 +1,36 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Check } from 'lucide-react'
+import { Check, Search, X } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { AppLayout, ScrollArea } from '@/components/layout'
 
 interface Recipe {
   id: string
   name: string
+  category?: string
 }
+
+const categories = ['全部', '家常菜', '川菜', '粤菜', '西餐', '日料', '甜点', '汤羹', '其他']
 
 export default function SelectPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [selected, setSelected] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [activeCategory, setActiveCategory] = useState('全部')
   const router = useRouter()
   const { user } = useAuthStore()
+
+  // 筛选菜谱
+  const filteredRecipes = useMemo(() => {
+    return recipes
+      .filter(r => activeCategory === '全部' || r.category === activeCategory)
+      .filter(r => r.name.toLowerCase().includes(searchTerm.toLowerCase()))
+  }, [recipes, activeCategory, searchTerm])
 
   const loadRecipes = useCallback(async () => {
     if (!user?.coupleId) return
@@ -70,6 +82,44 @@ export default function SelectPage() {
         <div className="w-16" />
       </header>
 
+      {/* 搜索框 */}
+      <div className="px-6 py-3 shrink-0">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#a3a3a3]" />
+          <input
+            type="text"
+            placeholder="搜索菜谱"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full h-10 pl-10 pr-10 bg-gray-50 rounded-xl text-[15px] outline-none focus:ring-2 focus:ring-primary-500"
+          />
+          {searchTerm && (
+            <button onClick={() => setSearchTerm('')} className="absolute right-4 top-1/2 -translate-y-1/2">
+              <X className="w-4 h-4 text-[#a3a3a3]" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* 分类标签 */}
+      <div className="px-6 pb-3 shrink-0 overflow-x-auto">
+        <div className="flex gap-2">
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`shrink-0 px-4 h-8 rounded-full text-[13px] font-medium transition-all ${
+                activeCategory === cat
+                  ? 'bg-[#FF6B6B] text-white'
+                  : 'bg-gray-100 text-[#666]'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* 内容区域 */}
       <ScrollArea className="px-6 pt-4 pb-20">
         {loading ? (
@@ -80,7 +130,7 @@ export default function SelectPage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
-            {recipes.map((recipe, index) => (
+            {filteredRecipes.map((recipe, index) => (
               <motion.div
                 key={recipe.id}
                 initial={{ opacity: 0, scale: 0.95 }}

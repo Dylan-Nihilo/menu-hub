@@ -16,9 +16,16 @@ export default function NewRecipePage() {
   const [difficulty, setDifficulty] = useState('')
   const [prepTime, setPrepTime] = useState('')
   const [cookTime, setCookTime] = useState('')
+  const [coverImage, setCoverImage] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { user } = useAuthStore()
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setCoverImage(e.target.files[0])
+    }
+  }
 
   const handleSubmit = async () => {
     if (!user?.coupleId || !name) return
@@ -66,12 +73,26 @@ export default function NewRecipePage() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="aspect-video bg-gray-50 rounded-2xl flex items-center justify-center mb-6"
+          className="aspect-video bg-gray-50 rounded-2xl flex items-center justify-center mb-6 relative overflow-hidden"
         >
-          <div className="text-center text-[#a3a3a3]">
-            <Camera className="w-10 h-10 mx-auto mb-2" />
-            <span className="text-[13px]">添加封面图片</span>
-          </div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+          />
+          {coverImage ? (
+            <img
+              src={URL.createObjectURL(coverImage)}
+              alt="预览"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="text-center text-[#a3a3a3]">
+              <Camera className="w-10 h-10 mx-auto mb-2" />
+              <span className="text-[13px]">点击上传封面图片</span>
+            </div>
+          )}
         </motion.div>
 
         {/* 表单 */}
@@ -111,7 +132,7 @@ export default function NewRecipePage() {
                   onClick={() => setDifficulty(difficulty === d ? '' : d)}
                   className={`flex-1 h-[44px] rounded-xl text-[15px] font-medium transition-all active:scale-[0.98] ${
                     difficulty === d
-                      ? 'bg-[#0a0a0a] text-white'
+                      ? 'bg-primary-500 text-white'
                       : 'bg-gray-50'
                   }`}
                 >

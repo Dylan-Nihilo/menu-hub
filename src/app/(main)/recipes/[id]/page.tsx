@@ -9,6 +9,7 @@ interface Recipe {
   id: string
   name: string
   category: string | null
+  difficulty: string | null
   coverImage: string | null
   prepTime: number | null
   cookTime: number | null
@@ -101,7 +102,7 @@ export default function RecipeDetailPage() {
       </div>
 
       <div className="px-4 py-4 shrink-0">
-        <button className="w-full h-14 bg-black text-white rounded-2xl font-medium active:scale-[0.98] transition-transform">
+        <button className="w-full h-14 bg-primary-500 text-white rounded-2xl font-medium active:scale-[0.98] transition-transform">
           开始做菜
         </button>
       </div>

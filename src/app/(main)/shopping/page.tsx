@@ -75,7 +75,7 @@ export default function ShoppingListPage() {
                   `}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all shrink-0
                       ${item.checked
                         ? 'bg-[#0a0a0a] border-[#0a0a0a]'
                         : 'border-[#a3a3a3]'}
