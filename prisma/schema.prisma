@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  nickname  String
+  email     String   @unique
+  password  String
+  coupleId  String?
+  role      String?
+  createdAt DateTime @default(now())
+
+  couple    Couple?  @relation(fields: [coupleId], references: [id])
+  recipes   Recipe[]
+  menuItems MenuItem[]
+}
+
+model Couple {
+  id         String   @id @default(cuid())
+  inviteCode String   @unique
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
+
+  users      User[]
+  recipes    Recipe[]
+  dailyMenus DailyMenu[]
+}
+
+model Recipe {
+  id          String   @id @default(cuid())
+  coupleId    String
+  createdById String
+  name        String
+  coverImage  String?
+  category    String?
+  prepTime    Int?
+  cookTime    Int?
+  createdAt   DateTime @default(now())
+
+  couple      Couple   @relation(fields: [coupleId], references: [id])
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  menuItems   MenuItem[]
+}
+
+model DailyMenu {
+  id        String   @id @default(cuid())
+  coupleId  String
+  menuDate  DateTime
+  status    String   @default("planning")
+
+  couple    Couple   @relation(fields: [coupleId], references: [id])
+  items     MenuItem[]
+
+  @@unique([coupleId, menuDate])
+}
+
+model MenuItem {
+  id           String   @id @default(cuid())
+  menuId       String
+  recipeId     String
+  selectedById String
+  createdAt    DateTime @default(now())
+
+  menu         DailyMenu @relation(fields: [menuId], references: [id])
+  recipe       Recipe    @relation(fields: [recipeId], references: [id])
+  selectedBy   User      @relation(fields: [selectedById], references: [id])
+}

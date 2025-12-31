@@ -1,0 +1,21 @@
+node_modules
+.next/
+dev.db
+dev.db-journal
+
+# Environment variables
+.env
+.env.local
+.env*.local
+
+# Generated
+/src/generated/prisma
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
