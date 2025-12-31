@@ -2,21 +2,24 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Plus, ChefHat } from 'lucide-react'
+import { Plus, ChefHat, Trash2 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { AppLayout, ScrollArea } from '@/components/layout'
 
 interface MenuItem {
   id: string
-  recipe?: { name: string }
+  recipe?: { id: string; name: string }
   selectedBy?: { nickname: string }
 }
 
 export default function HomePage() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
   const { user } = useAuthStore()
+  const router = useRouter()
 
   const loadTodayMenu = useCallback(async () => {
     if (!user?.coupleId) return
@@ -37,6 +40,10 @@ export default function HomePage() {
     if (user?.coupleId) loadTodayMenu()
     else setLoading(false)
   }, [user?.coupleId, loadTodayMenu])
+
+  const handleDeleteMenuItem = async (id: string) => {
+    setMenuItems(menuItems.filter(item => item.id !== id))
+  }
 
   // 获取问候语
   const getGreeting = () => {
@@ -91,8 +98,8 @@ export default function HomePage() {
             </div>
           ) : menuItems.length === 0 ? (
             <div className="py-8 text-center">
-              <div className="w-16 h-16 mx-auto bg-white rounded-full flex items-center justify-center mb-4">
-                <ChefHat className="w-8 h-8 text-[#a3a3a3]" />
+              <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#FFF5F5] to-[#FFE5E5] rounded-full flex items-center justify-center mb-4 shadow-sm">
+                <ChefHat className="w-10 h-10 text-[#FF6B6B]" />
               </div>
               <p className="text-[15px] font-medium text-[#0a0a0a]">今天还没点菜</p>
               <p className="text-[13px] text-[#a3a3a3] mt-1">和 TA 一起选择今天吃什么吧</p>
@@ -105,10 +112,28 @@ export default function HomePage() {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="flex items-center justify-between p-3 bg-white rounded-xl"
+                  onMouseEnter={() => setHoveredId(item.id)}
+                  onMouseLeave={() => setHoveredId(null)}
+                  onClick={() => router.push(`/recipes/${item.recipe?.id}`)}
+                  className="flex items-center justify-between p-3 bg-white rounded-xl cursor-pointer hover:bg-gray-50 active:scale-[0.98] transition-all"
                 >
-                  <span className="text-[15px] text-[#0a0a0a]">{item.recipe?.name}</span>
-                  <span className="text-[13px] text-[#a3a3a3]">{item.selectedBy?.nickname}</span>
+                  <span className="text-[15px] text-[#0a0a0a] font-medium">{item.recipe?.name}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[13px] text-[#a3a3a3]">{item.selectedBy?.nickname}</span>
+                    {hoveredId === item.id && (
+                      <motion.button
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleDeleteMenuItem(item.id)
+                        }}
+                        className="p-1 hover:bg-red-50 rounded-lg"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </motion.button>
+                    )}
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -124,11 +149,12 @@ export default function HomePage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="absolute bottom-[calc(var(--nav-height)+var(--safe-bottom)+16px)] left-6 right-6"
+        className="fixed left-0 right-0 p-4 bg-white/80 backdrop-blur-xl border-t border-gray-100"
+        style={{ bottom: 'calc(var(--nav-height) + var(--safe-bottom))' }}
       >
         <Link
           href="/select"
-          className="flex items-center justify-center gap-2 w-full h-[48px] bg-[#0a0a0a] text-white rounded-xl text-[15px] font-medium active:scale-[0.98] transition-transform"
+          className="flex items-center justify-center gap-2 w-full h-[48px] bg-[#FF6B6B] text-white rounded-xl text-[15px] font-medium active:scale-[0.98] transition-transform shadow-lg"
         >
           <Plus className="w-5 h-5" />
           点菜
