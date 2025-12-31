@@ -19,3 +19,11 @@ dev.db-journal
 
 # OS
 .DS_Store
+
+# Temp files
+*.backup
+*.log
+tsconfig.tsbuildinfo
+improved-pages/
+menu-hub-ui-improvement/
+.claude/
