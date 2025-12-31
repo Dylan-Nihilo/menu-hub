@@ -14,6 +14,7 @@ interface Recipe {
   difficulty?: string
   prepTime?: number
   cookTime?: number
+  coverImage?: string
 }
 
 const categories = ['全部', '家常菜', '川菜', '粤菜', '西餐', '日料', '甜点', '汤羹', '其他']
@@ -136,7 +137,22 @@ export default function RecipesPage() {
               >
                 <Link href={`/recipes/${recipe.id}`}>
                   <div className="bg-gray-50 rounded-2xl overflow-hidden active:scale-[0.98] transition-transform">
-                    <div className="aspect-square bg-gray-100" />
+                    <div className="aspect-square bg-gray-100 relative">
+                      {recipe.coverImage ? (
+                        <img
+                          src={recipe.coverImage}
+                          alt={recipe.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-[#a3a3a3]">
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <path d="M12 6.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z" />
+                            <path d="M16.5 22h-9a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5h9a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5Z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
                     <div className="p-3">
                       <p className="font-medium text-[15px] text-[#0a0a0a] truncate">{recipe.name}</p>
                       {recipe.category && (

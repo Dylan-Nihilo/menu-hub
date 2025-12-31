@@ -39,8 +39,11 @@ model Recipe {
   name        String
   coverImage  String?
   category    String?
+  difficulty  String?
   prepTime    Int?
   cookTime    Int?
+  ingredients String?  // JSON: [{name, amount}]
+  steps       String?  // JSON: [{order, content}]
   createdAt   DateTime @default(now())
 
   couple      Couple   @relation(fields: [coupleId], references: [id])
@@ -70,4 +73,20 @@ model MenuItem {
   menu         DailyMenu @relation(fields: [menuId], references: [id])
   recipe       Recipe    @relation(fields: [recipeId], references: [id])
   selectedBy   User      @relation(fields: [selectedById], references: [id])
+}
+
+model ShoppingItem {
+  id        String   @id @default(cuid())
+  coupleId  String
+  name      String
+  amount    String?
+  category  String
+  checked   Boolean  @default(false)
+  type      String   @default("memo") // memo, common, recipe
+  recipeId  String?  // 关联的菜谱ID（如果是菜谱专属食材）
+  recipeName String? // 菜谱名称
+  listDate  DateTime // 清单日期
+  createdAt DateTime @default(now())
+
+  @@index([coupleId, listDate])
 }

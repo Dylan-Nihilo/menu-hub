@@ -1,0 +1,85 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix=
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            # 创建目录
+            mkdir -p /opt/menu-app/data /opt/menu-app/public/uploads
+            cd /opt/menu-app
+
+            # 创建 docker-compose.yml
+            cat > docker-compose.yml << 'EOF'
+            version: '3.8'
+            services:
+              menu-app:
+                image: ghcr.io/dylan-nihilo/menu-hub:latest
+                container_name: menu-app
+                restart: unless-stopped
+                ports:
+                  - "3001:3000"
+                volumes:
+                  - ./data:/app/data
+                  - ./public/uploads:/app/public/uploads
+                environment:
+                  - NODE_ENV=production
+                  - DATABASE_URL=file:/app/data/prod.db
+            EOF
+
+            # 拉取并启动
+            docker pull ghcr.io/dylan-nihilo/menu-hub:latest
+            docker-compose down || true
+            docker-compose up -d
+            docker image prune -f

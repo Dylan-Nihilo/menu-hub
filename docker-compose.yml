@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  menu-app:
+    image: ghcr.io/dylan-nihilo/menu-hub:latest
+    container_name: menu-app
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./data:/app/data
+      - ./public/uploads:/app/public/uploads
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/prod.db

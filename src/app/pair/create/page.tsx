@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -10,7 +11,7 @@ export default function CreatePairPage() {
   const [copied, setCopied] = useState(false)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const { user } = useAuthStore()
+  const { user, setUser } = useAuthStore()
 
   useEffect(() => {
     if (user) createCouple()
@@ -24,6 +25,10 @@ export default function CreatePairPage() {
       body: JSON.stringify({ userId: user.id }),
     })
     const data = await res.json()
+
+    // 更新用户的coupleId
+    setUser({ ...user, coupleId: data.id })
+
     if (data.status === 'active') {
       router.push('/home')
     } else {
@@ -32,10 +37,27 @@ export default function CreatePairPage() {
     setLoading(false)
   }
 
-  const copyCode = () => {
-    navigator.clipboard.writeText(code)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+  const copyCode = async () => {
+    try {
+      // 尝试使用 Clipboard API
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(code)
+      } else {
+        // Fallback: 使用传统方法
+        const textArea = document.createElement('textarea')
+        textArea.value = code
+        textArea.style.position = 'fixed'
+        textArea.style.left = '-999999px'
+        document.body.appendChild(textArea)
+        textArea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textArea)
+      }
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('复制失败:', err)
+    }
   }
 
   if (loading) {
@@ -77,7 +99,7 @@ export default function CreatePairPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mt-6"
+          className="mt-6 space-y-3"
         >
           <button
             onClick={copyCode}
@@ -88,6 +110,27 @@ export default function CreatePairPage() {
             }`}
           >
             {copied ? '已复制' : '复制邀请码'}
+          </button>
+
+          <Link
+            href="/pair/join"
+            className="w-full h-[48px] rounded-xl text-[15px] font-medium bg-gray-100 text-[#0a0a0a] flex items-center justify-center active:scale-[0.98] transition-all"
+          >
+            我有邀请码
+          </Link>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="mt-8 text-center"
+        >
+          <button
+            onClick={() => router.push('/home')}
+            className="text-[14px] text-[#a3a3a3]"
+          >
+            跳过，稍后配对
           </button>
         </motion.div>
       </div>

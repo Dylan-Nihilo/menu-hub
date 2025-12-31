@@ -5,6 +5,7 @@ interface User {
   email: string
   nickname: string
   coupleId?: string | null
+  createdAt?: string
 }
 
 interface AuthState {
