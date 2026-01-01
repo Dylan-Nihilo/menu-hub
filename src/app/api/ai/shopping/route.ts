@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-const AI_BASE_URL = 'http://localhost:8045'
+const AI_BASE_URL = 'http://172.17.0.1:8045'
 const AI_API_KEY = 'sk-148151549d9a4cc2a8e9eb8f320eebf8'
 const AI_MODEL = 'claude-sonnet-4-5-thinking'
 
