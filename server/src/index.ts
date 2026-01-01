@@ -15,6 +15,12 @@ const PORT = process.env.PORT || 3001
 app.use(cors())
 app.use(express.json())
 
+// 请求日志
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`, req.method === 'POST' ? req.body : req.query)
+  next()
+})
+
 // 静态文件服务
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
 
