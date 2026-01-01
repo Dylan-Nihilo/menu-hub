@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter, Link } from 'expo-router'
+import { Feather } from '@expo/vector-icons'
 import { useAuthStore } from '../../stores/authStore'
-import { api } from '../../lib/api'
-import { colors, typography, spacing, borderRadius } from '../../constants'
+import { AnimatedPressable } from '../../components/animated'
+
+const API_BASE = 'http://192.168.88.233:3001/api'
 
 export default function CreatePairScreen() {
   const [code, setCode] = useState('')
@@ -13,17 +15,28 @@ export default function CreatePairScreen() {
   const router = useRouter()
 
   useEffect(() => {
-    api.post('/couple/create', { userId: user?.id })
-      .then(data => {
+    const createCouple = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/couple/create`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: user?.id }),
+        })
+        const data = await res.json()
         setCode(data.inviteCode)
         setUser({ ...user!, coupleId: data.id })
-      })
-      .finally(() => setLoading(false))
+      } catch {}
+      setLoading(false)
+    }
+    createCouple()
   }, [])
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.content}>
+        <View style={styles.iconContainer}>
+          <Feather name="heart" size={48} color="#0a0a0a" />
+        </View>
         <Text style={styles.title}>邀请 TA</Text>
         <Text style={styles.subtitle}>分享邀请码给你的另一半</Text>
 
@@ -31,41 +44,54 @@ export default function CreatePairScreen() {
           <Text style={styles.code}>{loading ? '...' : code}</Text>
         </View>
 
-        <TouchableOpacity
+        <AnimatedPressable
           style={styles.button}
           onPress={() => router.replace('/(tabs)/home')}
         >
           <Text style={styles.buttonText}>进入首页</Text>
-        </TouchableOpacity>
+        </AnimatedPressable>
       </View>
 
       <Link href="/pair/join" asChild>
-        <TouchableOpacity style={styles.link}>
+        <AnimatedPressable style={styles.link}>
           <Text style={styles.linkText}>已有邀请码？加入配对</Text>
-        </TouchableOpacity>
+        </AnimatedPressable>
       </Link>
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  content: { flex: 1, padding: spacing['2xl'], justifyContent: 'center' },
-  title: { ...typography.h1, color: colors.text.primary, textAlign: 'center' },
-  subtitle: { ...typography.body, color: colors.text.muted, textAlign: 'center', marginTop: spacing.sm },
-  codeBox: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius['2xl'],
-    padding: spacing['2xl'],
-    marginVertical: spacing['2xl'],
+  container: { flex: 1, backgroundColor: '#fff' },
+  content: { flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center' },
+  iconContainer: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: '#f5f5f5',
     alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 24,
   },
-  code: { fontSize: 32, fontWeight: '700', color: colors.primary, letterSpacing: 4 },
+  title: { fontSize: 28, fontWeight: '600', color: '#0a0a0a', textAlign: 'center' },
+  subtitle: { fontSize: 14, color: '#a3a3a3', textAlign: 'center', marginTop: 8 },
+  codeBox: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 16,
+    paddingVertical: 24,
+    paddingHorizontal: 48,
+    marginVertical: 32,
+  },
+  code: { fontSize: 32, fontWeight: '700', color: '#0a0a0a', letterSpacing: 4 },
   button: {
-    height: 56, backgroundColor: colors.primary,
-    borderRadius: borderRadius.xl, alignItems: 'center', justifyContent: 'center',
+    width: '100%',
+    height: 48,
+    backgroundColor: '#0a0a0a',
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  buttonText: { ...typography.body, fontWeight: '600', color: colors.background },
-  link: { padding: spacing['2xl'], alignItems: 'center' },
-  linkText: { ...typography.caption, color: colors.text.secondary },
+  buttonText: { fontSize: 15, fontWeight: '600', color: '#fff' },
+  link: { padding: 24, alignItems: 'center' },
+  linkText: { fontSize: 14, color: '#666' },
 })

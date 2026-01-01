@@ -1,22 +1,22 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
 import { useAuthStore } from '../../stores/authStore'
-import { colors, typography, spacing, borderRadius } from '../../constants'
+import { AnimatedPressable } from '../../components/animated'
 
 export default function ProfileSettingsScreen() {
   const { user } = useAuthStore()
   const router = useRouter()
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Feather name="arrow-left" size={24} color={colors.primary} />
-        </TouchableOpacity>
+        <AnimatedPressable onPress={() => router.back()} style={styles.backBtn}>
+          <Feather name="chevron-left" size={24} color="#0a0a0a" />
+        </AnimatedPressable>
         <Text style={styles.title}>个人资料</Text>
-        <View style={{ width: 24 }} />
+        <View style={{ width: 32 }} />
       </View>
 
       <View style={styles.content}>
@@ -34,11 +34,23 @@ export default function ProfileSettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: spacing.lg },
-  title: { ...typography.h3, color: colors.text.primary },
-  content: { padding: spacing['2xl'] },
-  item: { backgroundColor: colors.surface, borderRadius: borderRadius.xl, padding: spacing.lg, marginBottom: spacing.md },
-  label: { ...typography.caption, color: colors.text.muted },
-  value: { ...typography.body, color: colors.text.primary, marginTop: spacing.xs },
+  container: { flex: 1, backgroundColor: '#fff' },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  backBtn: { padding: 4 },
+  title: { fontSize: 17, fontWeight: '600', color: '#0a0a0a' },
+  content: { padding: 24 },
+  item: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+  },
+  label: { fontSize: 13, color: '#a3a3a3' },
+  value: { fontSize: 15, color: '#0a0a0a', marginTop: 4 },
 })

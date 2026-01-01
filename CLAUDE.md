@@ -2,6 +2,16 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ Development Priority
+
+**Mobile App First** - 所有新功能开发、调试、测试数据添加都在 `/mobile` 目录进行。Web 端 (`/src`) 仅作为历史参考保留，不再维护。
+
+**UI-First Design** - 这是一个 UI 优先的应用，设计质量是核心竞争力：
+- 严格遵循黑白灰设计系统，不使用彩色
+- 动画和交互反馈必须流畅自然
+- 参考 `/mobile/lib/theme.ts` 和 `/mobile/lib/motion.ts` 的设计规范
+- 任何 UI 修改前先理解现有设计语言
+
 ## Commands
 
 ```bash

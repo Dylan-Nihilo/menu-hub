@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useAuthStore } from '../stores/authStore'
-import { colors, typography } from '../constants'
 
 export default function SplashScreen() {
   const router = useRouter()
@@ -35,7 +34,7 @@ export default function SplashScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -43,7 +42,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 20,
-    backgroundColor: colors.primary,
+    backgroundColor: '#0a0a0a',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
@@ -51,15 +50,16 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 40,
     fontWeight: '700',
-    color: colors.background,
+    color: '#fff',
   },
   title: {
-    ...typography.h1,
-    color: colors.text.primary,
+    fontSize: 28,
+    fontWeight: '600',
+    color: '#0a0a0a',
     marginBottom: 8,
   },
   subtitle: {
-    ...typography.caption,
-    color: colors.text.muted,
+    fontSize: 13,
+    color: '#a3a3a3',
   },
 })

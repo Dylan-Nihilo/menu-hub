@@ -22,29 +22,41 @@ export async function GET(request: Request) {
     },
   })
 
-  return NextResponse.json(menu)
+  return NextResponse.json(menu || { items: [] })
 }
 
 export async function POST(request: Request) {
   const { coupleId, date, recipeIds, userId } = await request.json()
 
+  if (!coupleId || !date || !recipeIds?.length) {
+    return NextResponse.json({ error: '缺少参数' }, { status: 400 })
+  }
+
   let menu = await prisma.dailyMenu.findUnique({
     where: { coupleId_menuDate: { coupleId, menuDate: new Date(date) } },
+    include: { items: true },
   })
 
   if (!menu) {
     menu = await prisma.dailyMenu.create({
       data: { coupleId, menuDate: new Date(date) },
+      include: { items: true },
     })
   }
 
-  await prisma.menuItem.createMany({
-    data: recipeIds.map((recipeId: string) => ({
-      menuId: menu.id,
-      recipeId,
-      selectedById: userId,
-    })),
-  })
+  // 过滤掉已存在的 recipeId，避免重复插入
+  const existingRecipeIds = new Set(menu.items.map(item => item.recipeId))
+  const newRecipeIds = recipeIds.filter((id: string) => !existingRecipeIds.has(id))
+
+  if (newRecipeIds.length > 0) {
+    await prisma.menuItem.createMany({
+      data: newRecipeIds.map((recipeId: string) => ({
+        menuId: menu.id,
+        recipeId,
+        selectedById: userId,
+      })),
+    })
+  }
 
   return NextResponse.json({ success: true })
 }

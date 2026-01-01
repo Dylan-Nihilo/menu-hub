@@ -18,7 +18,11 @@ export async function GET(
     return NextResponse.json({ error: '未找到' }, { status: 404 })
   }
 
-  return NextResponse.json(couple)
+  // 返回 pairCode 字段（兼容前端）
+  return NextResponse.json({
+    ...couple,
+    pairCode: couple.inviteCode
+  })
 }
 
 export async function DELETE(

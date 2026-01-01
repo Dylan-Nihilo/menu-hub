@@ -110,7 +110,7 @@ export default function SelectPage() {
               onClick={() => setActiveCategory(cat)}
               className={`shrink-0 px-4 h-8 rounded-full text-[13px] font-medium transition-all ${
                 activeCategory === cat
-                  ? 'bg-[#FF6B6B] text-white'
+                  ? 'bg-[#0a0a0a] text-white'
                   : 'bg-gray-100 text-[#666]'
               }`}
             >

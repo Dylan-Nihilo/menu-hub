@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 
-const AI_BASE_URL = 'http://172.17.0.1:8045'
-const AI_API_KEY = 'sk-148151549d9a4cc2a8e9eb8f320eebf8'
-const AI_MODEL = 'claude-sonnet-4-5-thinking'
+const AI_BASE_URL = process.env.AI_BASE_URL || 'http://172.17.0.1:8045'
+const AI_API_KEY = process.env.AI_API_KEY || 'sk-148151549d9a4cc2a8e9eb8f320eebf8'
+const AI_MODEL = process.env.AI_MODEL || 'claude-sonnet-4-5-thinking'
 
 const SYSTEM_PROMPT = `你是一个购物清单助手。用户会给你多道菜的食材列表，你需要：
 1. 识别相同或相似的食材（如"生姜"和"姜"是同一种）

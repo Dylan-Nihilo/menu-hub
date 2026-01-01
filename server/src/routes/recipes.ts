@@ -21,10 +21,24 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   const { coupleId, createdById, name, category, ingredients, steps } = req.body
-  const recipe = await prisma.recipe.create({
-    data: { coupleId, createdById, name, category, ingredients, steps },
-  })
-  res.json(recipe)
+  if (!createdById) {
+    return res.status(400).json({ error: '缺少 createdById' })
+  }
+  try {
+    const recipe = await prisma.recipe.create({
+      data: {
+        name,
+        category,
+        ingredients,
+        steps,
+        couple: { connect: { id: coupleId } },
+        createdBy: { connect: { id: createdById } },
+      },
+    })
+    res.json(recipe)
+  } catch (e) {
+    res.status(500).json({ error: '创建失败' })
+  }
 })
 
 router.delete('/:id', async (req, res) => {

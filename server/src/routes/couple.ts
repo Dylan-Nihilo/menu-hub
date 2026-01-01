@@ -35,4 +35,13 @@ router.post('/join', async (req, res) => {
   res.json(couple)
 })
 
+router.get('/:id', async (req, res) => {
+  const couple = await prisma.couple.findUnique({
+    where: { id: req.params.id },
+    include: { users: { select: { id: true, nickname: true } } },
+  })
+  if (!couple) return res.status(404).json({ error: '配对不存在' })
+  res.json(couple)
+})
+
 export default router

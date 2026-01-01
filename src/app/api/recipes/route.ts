@@ -18,9 +18,21 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const data = await request.json()
+  try {
+    const data = await request.json()
+    const { coupleId, createdById, name } = data
 
-  const recipe = await prisma.recipe.create({ data })
+    if (!coupleId || !createdById || !name?.trim()) {
+      return NextResponse.json(
+        { error: '缺少必填字段：coupleId, createdById, name' },
+        { status: 400 }
+      )
+    }
 
-  return NextResponse.json(recipe)
+    const recipe = await prisma.recipe.create({ data })
+    return NextResponse.json(recipe)
+  } catch (error) {
+    console.error('POST recipe error:', error)
+    return NextResponse.json({ error: '创建失败' }, { status: 500 })
+  }
 }

@@ -1,7 +1,7 @@
 // API 基础配置
 // 开发环境使用本地服务器，生产环境使用远程服务器
 export const API_BASE_URL = __DEV__
-  ? 'http://localhost:3001/api'
+  ? 'http://192.168.88.233:3001/api'
   : 'https://menu.commitme.top/api'
 
 export const api = {
