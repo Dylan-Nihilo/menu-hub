@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, ScrollView,
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Feather } from '@expo/vector-icons'
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons'
 import { useAuthStore } from '../../stores/authStore'
 import { useToast, ConfirmModal } from '../../components/ui'
 import { AnimatedPressable, AnimatedCheckbox, AnimatedListItem, AnimatedBottomBar, SwipeableRow } from '../../components/animated'
@@ -341,7 +341,7 @@ export default function ShoppingScreen() {
               {generating ? (
                 <ActivityIndicator size="small" color="#fff" />
               ) : (
-                <Feather name="cpu" size={16} color="#fff" />
+                <MaterialCommunityIcons name="brain" size={18} color="#fff" />
               )}
               <Text style={styles.aiBtnText}>{generating ? '生成中...' : 'AI 生成购物清单'}</Text>
             </AnimatedPressable>
@@ -478,7 +478,7 @@ export default function ShoppingScreen() {
       <Modal
         visible={showAddModal}
         transparent
-        animationType="slide"
+        animationType="fade"
         onRequestClose={() => setShowAddModal(false)}
       >
         <KeyboardAvoidingView
