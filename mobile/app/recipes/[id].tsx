@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { View, Text, StyleSheet, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, Image } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
@@ -12,6 +12,7 @@ const API_BASE = 'http://192.168.88.233:3001/api'
 interface Recipe {
   id: string
   name: string
+  coverImage?: string
   category?: string
   difficulty?: string
   prepTime?: number
@@ -53,10 +54,10 @@ export default function RecipeDetailScreen() {
     try {
       const res = await fetch(`${API_BASE}/recipes/${id}`, { method: 'DELETE' })
       if (res.ok) {
-        // 触发菜谱列表刷新
         useAuthStore.getState().triggerRecipeRefresh()
-        showToast('菜谱已删除', 'success')
+        setShowDeleteConfirm(false)
         router.back()
+        setTimeout(() => showToast('菜谱已删除', 'success'), 300)
       } else {
         showToast('删除失败，请重试', 'error')
       }
@@ -64,7 +65,6 @@ export default function RecipeDetailScreen() {
       showToast('网络错误，请重试', 'error')
     } finally {
       setDeleting(false)
-      setShowDeleteConfirm(false)
     }
   }
 
@@ -89,9 +89,16 @@ export default function RecipeDetailScreen() {
       </View>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* 封面图占位 */}
+        {/* 封面图 */}
         <View style={styles.coverImage}>
-          <Feather name="image" size={48} color="#d4d4d4" />
+          {recipe?.coverImage ? (
+            <Image
+              source={{ uri: recipe.coverImage }}
+              style={styles.coverImg}
+            />
+          ) : (
+            <Feather name="image" size={48} color="#d4d4d4" />
+          )}
         </View>
 
         {/* 标题和标签 */}
@@ -192,6 +199,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  coverImg: {
+    width: '100%',
+    height: '100%',
   },
   content: { padding: 16 },
   title: {

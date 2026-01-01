@@ -64,8 +64,8 @@ export default function ProfileScreen() {
   }, [loadStats, loadCoupleInfo])
 
   const handleLogout = () => {
+    setShowLogoutConfirm(false)
     setUser(null)
-    showToast('已退出登录', 'success')
     router.replace('/(auth)/login')
   }
 

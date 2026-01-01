@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { View, Text, StyleSheet, ScrollView, TextInput, ActivityIndicator, Image } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
-import { Feather } from '@expo/vector-icons'
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker'
 import { useAuthStore } from '../../stores/authStore'
 import { useToast } from '../../components/ui'
@@ -112,10 +112,9 @@ export default function NewRecipeScreen() {
         }),
       })
       if (!res.ok) throw new Error()
-      // 触发菜谱列表刷新
       useAuthStore.getState().triggerRecipeRefresh()
-      showToast('菜谱保存成功', 'success')
       router.back()
+      setTimeout(() => showToast('菜谱保存成功', 'success'), 300)
     } catch {
       showToast('保存失败，请重试', 'error')
     } finally {
@@ -227,7 +226,7 @@ export default function NewRecipeScreen() {
             {generating ? (
               <ActivityIndicator size="small" color="#fff" />
             ) : (
-              <Feather name="cpu" size={18} color="#fff" />
+              <MaterialCommunityIcons name="brain" size={20} color="#fff" />
             )}
           </AnimatedPressable>
         </View>
