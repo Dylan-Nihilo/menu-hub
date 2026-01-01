@@ -33,6 +33,13 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+
+# 复制启动脚本
+COPY start.sh ./start.sh
+RUN chmod +x ./start.sh
 
 # 创建数据目录并设置权限
 RUN mkdir -p /app/data && chown -R nextjs:nodejs /app/data
@@ -45,4 +52,4 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 ENV DATABASE_URL="file:/app/data/prod.db"
 
-CMD ["node", "server.js"]
+CMD ["./start.sh"]
