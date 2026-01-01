@@ -8,31 +8,47 @@ function generateCode() {
 }
 
 router.post('/create', async (req, res) => {
-  const { userId } = req.body
-  const couple = await prisma.couple.create({
-    data: { inviteCode: generateCode(), status: 'pending' },
-  })
-  await prisma.user.update({
-    where: { id: userId },
-    data: { coupleId: couple.id },
-  })
-  res.json(couple)
+  try {
+    const { userId } = req.body
+    if (!userId) {
+      return res.status(400).json({ error: '缺少用户ID' })
+    }
+    const couple = await prisma.couple.create({
+      data: { inviteCode: generateCode(), status: 'pending' },
+    })
+    await prisma.user.update({
+      where: { id: userId },
+      data: { coupleId: couple.id },
+    })
+    res.json(couple)
+  } catch (error) {
+    console.error('创建配对失败:', error)
+    res.status(500).json({ error: '创建配对失败' })
+  }
 })
 
 router.post('/join', async (req, res) => {
-  const { userId, inviteCode } = req.body
-  const couple = await prisma.couple.findUnique({ where: { inviteCode } })
-  if (!couple) return res.status(404).json({ error: '邀请码无效' })
+  try {
+    const { userId, inviteCode } = req.body
+    if (!userId || !inviteCode) {
+      return res.status(400).json({ error: '缺少必要参数' })
+    }
+    const couple = await prisma.couple.findUnique({ where: { inviteCode } })
+    if (!couple) return res.status(404).json({ error: '邀请码无效' })
 
-  await prisma.user.update({
-    where: { id: userId },
-    data: { coupleId: couple.id },
-  })
-  await prisma.couple.update({
-    where: { id: couple.id },
-    data: { status: 'active' },
-  })
-  res.json(couple)
+    await prisma.user.update({
+      where: { id: userId },
+      data: { coupleId: couple.id },
+    })
+    await prisma.couple.update({
+      where: { id: couple.id },
+      data: { status: 'active' },
+    })
+    res.json(couple)
+  } catch (error) {
+    console.error('加入配对失败:', error)
+    res.status(500).json({ error: '加入配对失败' })
+  }
 })
 
 router.get('/:id', async (req, res) => {

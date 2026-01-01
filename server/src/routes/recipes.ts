@@ -3,6 +3,8 @@ import { prisma } from '../lib/db'
 
 const router = Router()
 
+const getBaseUrl = (req: any) => `${req.protocol}://${req.get('host')}`
+
 router.get('/', async (req, res) => {
   const { coupleId } = req.query
   if (!coupleId) return res.status(400).json({ error: '缺少 coupleId' })
@@ -10,17 +12,26 @@ router.get('/', async (req, res) => {
     where: { coupleId: coupleId as string },
     orderBy: { createdAt: 'desc' },
   })
-  res.json(recipes)
+  const baseUrl = getBaseUrl(req)
+  const recipesWithFullUrl = recipes.map(r => ({
+    ...r,
+    coverImage: r.coverImage ? `${baseUrl}${r.coverImage}` : null
+  }))
+  res.json(recipesWithFullUrl)
 })
 
 router.get('/:id', async (req, res) => {
   const recipe = await prisma.recipe.findUnique({ where: { id: req.params.id } })
   if (!recipe) return res.status(404).json({ error: '食谱不存在' })
-  res.json(recipe)
+  const baseUrl = getBaseUrl(req)
+  res.json({
+    ...recipe,
+    coverImage: recipe.coverImage ? `${baseUrl}${recipe.coverImage}` : null
+  })
 })
 
 router.post('/', async (req, res) => {
-  const { coupleId, createdById, name, category, ingredients, steps } = req.body
+  const { coupleId, createdById, name, coverImage, category, difficulty, prepTime, cookTime, ingredients, steps } = req.body
   if (!createdById) {
     return res.status(400).json({ error: '缺少 createdById' })
   }
@@ -28,7 +39,11 @@ router.post('/', async (req, res) => {
     const recipe = await prisma.recipe.create({
       data: {
         name,
+        coverImage,
         category,
+        difficulty,
+        prepTime,
+        cookTime,
         ingredients,
         steps,
         couple: { connect: { id: coupleId } },
