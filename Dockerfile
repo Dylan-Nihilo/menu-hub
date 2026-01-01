@@ -1,4 +1,4 @@
-FROM node:18-alpine AS base
+FROM node:18-alpine3.18 AS base
 
 # 安装依赖阶段
 FROM base AS deps
@@ -25,9 +25,6 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-
-# 安装 OpenSSL 1.1 兼容库（Prisma 需要）
-RUN apk add --no-cache openssl1.1-compat
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
