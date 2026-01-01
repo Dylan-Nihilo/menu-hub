@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, ScrollView, Image, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, ScrollView, Image, Dimensions, RefreshControl } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
+import { useFocusEffect } from '@react-navigation/native'
 import { Feather } from '@expo/vector-icons'
 import { useAuthStore } from '../../stores/authStore'
 import { AnimatedPressable, FadeInView, Skeleton, AnimatedListItem } from '../../components/animated'
@@ -23,6 +24,7 @@ const categories = ['全部', '家常菜', '川菜', '粤菜', '西餐', '日料
 export default function RecipesScreen() {
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [activeCategory, setActiveCategory] = useState('全部')
   const { user, recipeRefreshKey } = useAuthStore()
@@ -34,11 +36,12 @@ export default function RecipesScreen() {
       .filter(r => r.name.toLowerCase().includes(searchTerm.toLowerCase()))
   }, [recipes, activeCategory, searchTerm])
 
-  const loadRecipes = useCallback(async () => {
+  const loadRecipes = useCallback(async (isRefresh = false) => {
     if (!user?.coupleId) {
       setLoading(false)
       return
     }
+    if (isRefresh) setRefreshing(true)
     try {
       const res = await fetch(`${API_BASE}/recipes?coupleId=${user.coupleId}`)
       const data = await res.json()
@@ -47,6 +50,7 @@ export default function RecipesScreen() {
       setRecipes([])
     } finally {
       setLoading(false)
+      setRefreshing(false)
     }
   }, [user?.coupleId])
 
@@ -60,6 +64,13 @@ export default function RecipesScreen() {
       loadRecipes()
     }
   }, [recipeRefreshKey, loadRecipes])
+
+  // 切换到此 tab 时刷新
+  useFocusEffect(
+    useCallback(() => {
+      loadRecipes()
+    }, [loadRecipes])
+  )
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -148,6 +159,14 @@ export default function RecipesScreen() {
           numColumns={2}
           contentContainerStyle={styles.gridContent}
           columnWrapperStyle={styles.gridRow}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => loadRecipes(true)}
+              tintColor="#0a0a0a"
+              progressViewOffset={10}
+            />
+          }
           renderItem={({ item, index }) => (
             <AnimatedListItem index={index}>
               <AnimatedPressable

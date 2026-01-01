@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
+import { useFocusEffect } from '@react-navigation/native'
 import { Feather } from '@expo/vector-icons'
 import Animated, { useSharedValue, useAnimatedScrollHandler } from 'react-native-reanimated'
 import { useAuthStore } from '../../stores/authStore'
@@ -93,6 +94,14 @@ export default function HomeScreen() {
     }
   }, [menuRefreshKey, loadMenu, selectedDate])
 
+  // 切换到此 tab 时刷新
+  useFocusEffect(
+    useCallback(() => {
+      loadMenu(selectedDate)
+      loadRecipes()
+    }, [loadMenu, loadRecipes, selectedDate])
+  )
+
   // 生成一周日期
   const getWeekDays = () => {
     const today = new Date()
@@ -181,7 +190,10 @@ export default function HomeScreen() {
             onRefresh={() => {
               setRefreshing(true)
               loadMenu(selectedDate)
+              loadRecipes()
             }}
+            tintColor="#0a0a0a"
+            progressViewOffset={10}
           />
         }
       >
