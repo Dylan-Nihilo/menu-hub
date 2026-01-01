@@ -70,6 +70,7 @@ export default function RegisterPage() {
                 placeholder="请输入昵称"
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
+                required
               />
               <Input
                 type="email"
@@ -77,6 +78,7 @@ export default function RegisterPage() {
                 placeholder="请输入邮箱"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
               <Input
                 type="password"
@@ -84,6 +86,8 @@ export default function RegisterPage() {
                 placeholder="请输入密码（至少6位）"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
               />
             </motion.div>
 
