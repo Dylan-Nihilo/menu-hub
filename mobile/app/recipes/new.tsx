@@ -13,6 +13,16 @@ const API_BASE = 'http://192.168.88.233:3001/api'
 const categories = ['家常菜', '川菜', '粤菜', '西餐', '日料', '甜点', '汤羹', '其他']
 const difficulties = ['简单', '中等', '困难']
 
+// AI生成封面的创意提示
+const COVER_TIPS = [
+  '寻找最佳光线...',
+  '摆盘中...',
+  '调整构图...',
+  '捕捉美味瞬间...',
+  '添加装饰...',
+  '完美出片...',
+]
+
 interface Ingredient { name: string; amount: string }
 interface Step { content: string }
 
@@ -28,6 +38,8 @@ export default function NewRecipeScreen() {
   const [generating, setGenerating] = useState(false)
   const [coverImage, setCoverImage] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
+  const [generatingCover, setGeneratingCover] = useState(false)
+  const [coverTip, setCoverTip] = useState(COVER_TIPS[0])
   const { user } = useAuthStore()
   const { showToast } = useToast()
   const router = useRouter()
@@ -83,6 +95,42 @@ export default function NewRecipeScreen() {
       showToast('上传失败，请重试', 'error')
     } finally {
       setUploading(false)
+    }
+  }
+
+  // AI生成封面
+  const handleGenerateCover = async () => {
+    if (!name.trim()) {
+      showToast('请先输入菜名', 'warning')
+      return
+    }
+    setGeneratingCover(true)
+    setCoverTip(COVER_TIPS[0])
+
+    let tipIndex = 0
+    const tipInterval = setInterval(() => {
+      tipIndex = (tipIndex + 1) % COVER_TIPS.length
+      setCoverTip(COVER_TIPS[tipIndex])
+    }, 2000)
+
+    try {
+      const res = await fetch(`${API_BASE}/ai-image/recipe-cover`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, category, ingredients }),
+      })
+      const data = await res.json()
+      if (data.image) {
+        setCoverImage(data.image)
+        showToast('封面生成成功', 'success')
+      } else {
+        showToast(data.error || '生成失败', 'error')
+      }
+    } catch {
+      showToast('网络错误，请重试', 'error')
+    } finally {
+      clearInterval(tipInterval)
+      setGeneratingCover(false)
     }
   }
 
@@ -187,27 +235,40 @@ export default function NewRecipeScreen() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* 封面图片 */}
-        <AnimatedPressable style={styles.coverContainer} onPress={pickImage} disabled={uploading}>
-          {coverImage ? (
-            <Image source={{ uri: `${API_BASE.replace('/api', '')}${coverImage}` }} style={styles.coverImage} />
-          ) : (
-            <View style={styles.coverPlaceholder}>
-              {uploading ? (
-                <ActivityIndicator size="large" color="#a3a3a3" />
-              ) : (
-                <>
-                  <Feather name="camera" size={32} color="#a3a3a3" />
-                  <Text style={styles.coverText}>添加封面图片</Text>
-                </>
-              )}
-            </View>
-          )}
-          {coverImage && !uploading && (
-            <View style={styles.coverEditBadge}>
-              <Feather name="edit-2" size={14} color="#fff" />
-            </View>
-          )}
-        </AnimatedPressable>
+        <View style={styles.coverSection}>
+          <AnimatedPressable style={styles.coverContainer} onPress={pickImage} disabled={uploading || generatingCover}>
+            {coverImage ? (
+              <Image
+                source={{ uri: coverImage.startsWith('data:') ? coverImage : `${API_BASE.replace('/api', '')}${coverImage}` }}
+                style={styles.coverImage}
+              />
+            ) : (
+              <View style={styles.coverPlaceholder}>
+                {uploading || generatingCover ? (
+                  <View style={styles.coverLoading}>
+                    <ActivityIndicator size="large" color="#0a0a0a" />
+                    <Text style={styles.coverLoadingText}>
+                      {generatingCover ? coverTip : '上传中...'}
+                    </Text>
+                  </View>
+                ) : (
+                  <>
+                    <Feather name="image" size={32} color="#a3a3a3" />
+                    <Text style={styles.coverText}>点击选择图片</Text>
+                  </>
+                )}
+              </View>
+            )}
+          </AnimatedPressable>
+          <AnimatedPressable
+            style={styles.aiCoverBtn}
+            onPress={handleGenerateCover}
+            disabled={generatingCover || uploading}
+          >
+            <MaterialCommunityIcons name="auto-fix" size={18} color="#fff" />
+            <Text style={styles.aiCoverBtnText}>AI 生成封面</Text>
+          </AnimatedPressable>
+        </View>
 
         {/* 菜名 + AI生成 */}
         <View style={styles.nameRow}>
@@ -386,13 +447,15 @@ const styles = StyleSheet.create({
   saveBtn: { fontSize: 15, fontWeight: '600', color: '#0a0a0a' },
   saveBtnDisabled: { color: '#a3a3a3' },
   content: { flex: 1, padding: 24 },
+  coverSection: {
+    marginBottom: 24,
+  },
   coverContainer: {
     width: '100%',
-    aspectRatio: 1,
+    aspectRatio: 16 / 9,
     borderRadius: 16,
     overflow: 'hidden',
-    marginBottom: 24,
-    position: 'relative',
+    marginBottom: 12,
   },
   coverImage: {
     width: '100%',
@@ -409,6 +472,28 @@ const styles = StyleSheet.create({
   coverText: {
     fontSize: 14,
     color: '#a3a3a3',
+  },
+  coverLoading: {
+    alignItems: 'center',
+  },
+  coverLoadingText: {
+    fontSize: 14,
+    color: '#0a0a0a',
+    marginTop: 12,
+  },
+  aiCoverBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    height: 44,
+    backgroundColor: '#0a0a0a',
+    borderRadius: 12,
+  },
+  aiCoverBtnText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#fff',
   },
   coverEditBadge: {
     position: 'absolute',

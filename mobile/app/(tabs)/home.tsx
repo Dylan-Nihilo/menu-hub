@@ -6,7 +6,16 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
 import { useFocusEffect } from '@react-navigation/native'
 import { Feather } from '@expo/vector-icons'
-import Animated, { useSharedValue, useAnimatedScrollHandler } from 'react-native-reanimated'
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  withSequence,
+  withTiming,
+  withSpring,
+  Easing,
+  runOnJS,
+} from 'react-native-reanimated'
 import { useAuthStore } from '../../stores/authStore'
 import { useToast, ConfirmModal } from '../../components/ui'
 import { AnimatedPressable, FadeInView, Skeleton, AnimatedListItem, AnimatedBottomBar, AnimatedHeader } from '../../components/animated'
@@ -24,6 +33,9 @@ interface Recipe {
   id: string
   name: string
   category?: string
+  ingredients?: string
+  prepTime?: number
+  cookTime?: number
 }
 
 // 口味标签 - 对应原版的 moodTags
@@ -35,6 +47,22 @@ const moodTags = [
   { id: 'quick', label: '快手菜', icon: 'zap' as const },
   { id: 'comfort', label: '家常', icon: 'home' as const },
 ]
+
+// 口味标签过滤逻辑
+const MOOD_FILTERS: Record<string, (recipe: Recipe) => boolean> = {
+  spicy: (r) => r.category === '川菜' || r.name.includes('辣') || (r.ingredients?.includes('辣') ?? false),
+  light: (r) => r.category === '粤菜' || r.category === '汤羹' || r.name.includes('清') || r.name.includes('蒸'),
+  meat: (r) => {
+    const meatKeywords = ['肉', '鸡', '鸭', '牛', '羊', '猪', '排骨', '翅']
+    return meatKeywords.some(k => r.name.includes(k) || (r.ingredients?.includes(k) ?? false))
+  },
+  seafood: (r) => {
+    const seafoodKeywords = ['鱼', '虾', '蟹', '贝', '海', '鲜']
+    return r.category === '日料' || seafoodKeywords.some(k => r.name.includes(k) || (r.ingredients?.includes(k) ?? false))
+  },
+  quick: (r) => ((r.prepTime || 0) + (r.cookTime || 0)) <= 30 && ((r.prepTime || 0) + (r.cookTime || 0)) > 0,
+  comfort: (r) => r.category === '家常菜' || r.category === '其他',
+}
 
 export default function HomeScreen() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
@@ -48,9 +76,24 @@ export default function HomeScreen() {
   const [isSpinning, setIsSpinning] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<MenuItem | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [weekStats, setWeekStats] = useState({ meals: 0, recipes: 0, topCategory: '' })
   const { user, menuRefreshKey } = useAuthStore()
   const router = useRouter()
   const { showToast } = useToast()
+
+  // 老虎机动画状态
+  const slotTranslateY = useSharedValue(0)
+  const slotOpacity = useSharedValue(1)
+  const slotScale = useSharedValue(1)
+
+  // 老虎机动画样式
+  const slotAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: slotTranslateY.value },
+      { scale: slotScale.value },
+    ],
+    opacity: slotOpacity.value,
+  }))
 
   // 加载菜单
   const loadMenu = useCallback(async (date: Date) => {
@@ -82,10 +125,34 @@ export default function HomeScreen() {
     } catch {}
   }, [user?.coupleId])
 
+  // 计算本周统计
+  const calculateWeekStats = useCallback(() => {
+    const allMenuItems = Object.values(weekMenus).flat()
+    const meals = allMenuItems.length
+    const uniqueRecipes = new Set(allMenuItems.map(item => item.recipe?.id)).size
+
+    // 统计分类
+    const categoryCount: Record<string, number> = {}
+    allMenuItems.forEach(item => {
+      const cat = item.recipe?.category || '其他'
+      categoryCount[cat] = (categoryCount[cat] || 0) + 1
+    })
+
+    const topCategory = Object.entries(categoryCount)
+      .sort((a, b) => b[1] - a[1])[0]?.[0] || ''
+
+    setWeekStats({ meals, recipes: uniqueRecipes, topCategory })
+  }, [weekMenus])
+
   useEffect(() => {
     loadMenu(selectedDate)
     loadRecipes()
   }, [loadMenu, loadRecipes, selectedDate])
+
+  // 计算周统计
+  useEffect(() => {
+    calculateWeekStats()
+  }, [calculateWeekStats])
 
   // 监听全局刷新信号
   useEffect(() => {
@@ -112,20 +179,66 @@ export default function HomeScreen() {
     })
   }
 
-  // 随机推荐 - 带转动效果
+  // 根据口味标签过滤食谱
+  const getFilteredRecipes = useCallback(() => {
+    if (selectedMoods.length === 0) return recipes
+    return recipes.filter(recipe =>
+      selectedMoods.some(moodId => MOOD_FILTERS[moodId]?.(recipe))
+    )
+  }, [recipes, selectedMoods])
+
+  // 随机推荐 - 优化后的老虎机动画
   const handleRandomPick = () => {
-    if (recipes.length === 0 || isSpinning) return
+    const filteredRecipes = getFilteredRecipes()
+    if (filteredRecipes.length === 0 || isSpinning) return
     setIsSpinning(true)
+
+    // 预选最终结果
+    const finalIndex = Math.floor(Math.random() * filteredRecipes.length)
+    const finalRecipe = filteredRecipes[finalIndex]
+
+    // 快速切换阶段 - 纯视觉效果
     let count = 0
-    const interval = setInterval(() => {
-      const randomIndex = Math.floor(Math.random() * recipes.length)
-      setRandomRecipe(recipes[randomIndex])
-      count++
-      if (count > 10) {
-        clearInterval(interval)
+    const totalSpins = 8
+    const spinQueue: Recipe[] = []
+
+    // 预生成随机序列，避免动画中计算
+    for (let i = 0; i < totalSpins; i++) {
+      spinQueue.push(filteredRecipes[Math.floor(Math.random() * filteredRecipes.length)])
+    }
+
+    const spin = () => {
+      if (count >= totalSpins) {
+        // 最终结果 - 弹入效果
+        setRandomRecipe(finalRecipe)
+        slotTranslateY.value = withSpring(0, { damping: 15, stiffness: 300 })
+        slotScale.value = withSequence(
+          withTiming(1.02, { duration: 100 }),
+          withSpring(1, { damping: 15, stiffness: 300 })
+        )
+        slotOpacity.value = 1
         setIsSpinning(false)
+        return
       }
-    }, 100)
+
+      // 使用预生成的序列
+      setRandomRecipe(spinQueue[count])
+
+      // 简单的淡入淡出，不做位移避免卡顿
+      slotOpacity.value = withSequence(
+        withTiming(0.6, { duration: 40 }),
+        withTiming(1, { duration: 40 })
+      )
+
+      count++
+      // 速度逐渐变慢：80ms -> 200ms
+      const delay = 80 + count * 15
+      setTimeout(spin, delay)
+    }
+
+    // 初始动画
+    slotOpacity.value = 0.8
+    spin()
   }
 
   // 切换口味标签
@@ -153,7 +266,11 @@ export default function HomeScreen() {
     try {
       const res = await fetch(`${API_BASE}/menu/item/${deleteTarget.id}`, { method: 'DELETE' })
       if (res.ok) {
-        setMenuItems(menuItems.filter(item => item.id !== deleteTarget.id))
+        const newMenuItems = menuItems.filter(item => item.id !== deleteTarget.id)
+        setMenuItems(newMenuItems)
+        // 同步更新 weekMenus 以刷新统计
+        const dateKey = selectedDate.toISOString().split('T')[0]
+        setWeekMenus(prev => ({ ...prev, [dateKey]: newMenuItems }))
         showToast('已从菜单移除', 'success')
       } else {
         showToast('删除失败，请重试', 'error')
@@ -327,47 +444,87 @@ export default function HomeScreen() {
         {/* 随机推荐 - 对齐 Web 版白卡 + Sparkles */}
         <View style={styles.randomCard}>
           <View style={styles.randomHeader}>
-            <Text style={styles.sectionTitle}>今天吃什么？</Text>
+            <View style={styles.randomTitleRow}>
+              <Text style={styles.sectionTitle}>今天吃什么？</Text>
+              {selectedMoods.length > 0 && (
+                <Text style={styles.filterCount}>
+                  {getFilteredRecipes().length} 道符合
+                </Text>
+              )}
+            </View>
             <AnimatedPressable
               style={styles.shuffleBtn}
               onPress={handleRandomPick}
-              disabled={recipes.length === 0 || isSpinning}
+              disabled={getFilteredRecipes().length === 0 || isSpinning}
             >
               <Feather
                 name="shuffle"
                 size={16}
                 color="#0a0a0a"
-                style={isSpinning ? { opacity: 0.5 } : undefined}
+                style={getFilteredRecipes().length === 0 || isSpinning ? { opacity: 0.5 } : undefined}
               />
-              <Text style={[styles.shuffleBtnText, isSpinning && { opacity: 0.5 }]}>换一个</Text>
+              <Text style={[styles.shuffleBtnText, (getFilteredRecipes().length === 0 || isSpinning) && { opacity: 0.5 }]}>换一个</Text>
             </AnimatedPressable>
           </View>
 
           {randomRecipe ? (
-            <AnimatedPressable
-              style={styles.randomResult}
-              onPress={() => router.push(`/recipes/${randomRecipe.id}`)}
-            >
-              <View>
-                <Text style={styles.randomName}>{randomRecipe.name}</Text>
-                {randomRecipe.category && (
-                  <Text style={styles.randomCategory}>{randomRecipe.category}</Text>
-                )}
-              </View>
-              <Feather name="star" size={20} color="#a3a3a3" />
-            </AnimatedPressable>
+            <Animated.View style={slotAnimatedStyle}>
+              <AnimatedPressable
+                style={styles.randomResult}
+                onPress={() => router.push(`/recipes/${randomRecipe.id}`)}
+              >
+                <View>
+                  <Text style={styles.randomName}>{randomRecipe.name}</Text>
+                  {randomRecipe.category && (
+                    <Text style={styles.randomCategory}>{randomRecipe.category}</Text>
+                  )}
+                </View>
+                <Feather name="star" size={20} color="#a3a3a3" />
+              </AnimatedPressable>
+            </Animated.View>
           ) : (
             <AnimatedPressable
               style={styles.randomEmpty}
               onPress={handleRandomPick}
-              disabled={recipes.length === 0}
+              disabled={getFilteredRecipes().length === 0}
             >
               <Text style={styles.randomEmptyText}>
-                {recipes.length === 0 ? '还没有食谱' : '点击随机推荐一道菜'}
+                {recipes.length === 0
+                  ? '还没有食谱'
+                  : getFilteredRecipes().length === 0
+                    ? '没有符合条件的食谱'
+                    : '点击随机推荐一道菜'}
               </Text>
             </AnimatedPressable>
           )}
         </View>
+
+        {/* 本周统计卡片 */}
+        {weekStats.meals > 0 && (
+          <View style={styles.statsCard}>
+            <Text style={styles.statsTitle}>本周烹饪</Text>
+            <View style={styles.statsRow}>
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>{weekStats.meals}</Text>
+                <Text style={styles.statLabel}>餐</Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>{weekStats.recipes}</Text>
+                <Text style={styles.statLabel}>道菜</Text>
+              </View>
+              {weekStats.topCategory && (
+                <>
+                  <View style={styles.statDivider} />
+                  <View style={styles.statItem}>
+                    <Text style={styles.statCategory}>{weekStats.topCategory}</Text>
+                    <Text style={styles.statLabel}>最爱</Text>
+                  </View>
+                </>
+              )}
+            </View>
+          </View>
+        )}
 
         {/* 底部留白 */}
         <View style={{ height: 120 }} />
@@ -626,6 +783,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
+  randomTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  filterCount: {
+    fontSize: 12,
+    color: '#a3a3a3',
+    backgroundColor: '#e5e5e5',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 10,
+  },
   shuffleBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -671,6 +841,48 @@ const styles = StyleSheet.create({
   randomEmptyText: {
     fontSize: 14,
     color: '#a3a3a3',
+  },
+  // 本周统计卡片
+  statsCard: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 20,
+    padding: 16,
+    marginTop: 16,
+  },
+  statsTitle: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#666',
+    marginBottom: 12,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  statItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statNumber: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#0a0a0a',
+  },
+  statCategory: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0a0a0a',
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#a3a3a3',
+    marginTop: 2,
+  },
+  statDivider: {
+    width: 1,
+    height: 32,
+    backgroundColor: '#e5e5e5',
   },
   // 底部按钮 - 毛玻璃效果
   footer: {

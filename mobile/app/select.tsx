@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, ScrollView, Dimensions, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, ScrollView, Dimensions, ActivityIndicator, Image } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { BlurView } from 'expo-blur'
 import { useRouter } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
 import { useAuthStore } from '../stores/authStore'
@@ -18,6 +17,7 @@ interface Recipe {
   id: string
   name: string
   category?: string
+  coverImage?: string
 }
 
 export default function SelectScreen() {
@@ -153,9 +153,13 @@ export default function SelectScreen() {
               styles.card,
               selected.includes(item.id) && styles.cardSelected
             ]}>
-              {/* 图片占位区域 */}
+              {/* 图片区域 */}
               <View style={styles.cardImage}>
-                <Feather name="image" size={32} color="#d4d4d4" />
+                {item.coverImage ? (
+                  <Image source={{ uri: item.coverImage }} style={styles.cardImg} />
+                ) : (
+                  <Feather name="image" size={32} color="#d4d4d4" />
+                )}
               </View>
               {/* 菜名 */}
               <View style={styles.cardContent}>
@@ -163,7 +167,7 @@ export default function SelectScreen() {
                 {item.category && <Text style={styles.cardCategory}>{item.category}</Text>}
               </View>
             </View>
-            {/* 选中标记 - 浮动勾标 */}
+            {/* 选中标记 */}
             {selected.includes(item.id) && (
               <View style={styles.checkBadge}>
                 <Feather name="check" size={12} color="#fff" />
@@ -224,7 +228,8 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     paddingHorizontal: 24,
-    paddingBottom: 12,
+    paddingTop: 12,
+    paddingBottom: 8,
   },
   searchBox: {
     flexDirection: 'row',
@@ -242,7 +247,7 @@ const styles = StyleSheet.create({
   },
   categoryContainer: {
     paddingHorizontal: 24,
-    paddingBottom: 12,
+    paddingBottom: 8,
     gap: 8,
   },
   categoryTag: {
@@ -269,7 +274,7 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingHorizontal: 24,
-    paddingTop: 12,
+    paddingTop: 4,
     paddingBottom: 120,
   },
   row: {
@@ -304,9 +309,13 @@ const styles = StyleSheet.create({
   cardImage: {
     width: '100%',
     aspectRatio: 1,
-    backgroundColor: '#e5e5e5',
+    backgroundColor: '#ebebeb',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  cardImg: {
+    width: '100%',
+    height: '100%',
   },
   cardContent: {
     padding: 12,

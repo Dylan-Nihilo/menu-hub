@@ -8,12 +8,13 @@ import shoppingRoutes from './routes/shopping'
 import coupleRoutes from './routes/couple'
 import uploadRoutes from './routes/upload'
 import aiRoutes from './routes/ai'
+import aiImageRoutes from './routes/ai-image'
 
 const app = express()
 const PORT = process.env.PORT || 3001
 
 app.use(cors())
-app.use(express.json())
+app.use(express.json({ limit: '50mb' }))
 
 // 请求日志
 app.use((req, res, next) => {
@@ -31,6 +32,7 @@ app.use('/api/shopping', shoppingRoutes)
 app.use('/api/couple', coupleRoutes)
 app.use('/api/upload', uploadRoutes)
 app.use('/api/ai', aiRoutes)
+app.use('/api/ai-image', aiImageRoutes)
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on http://0.0.0.0:${PORT}`)

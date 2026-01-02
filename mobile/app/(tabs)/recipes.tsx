@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, ScrollView, Image, Dimensions, RefreshControl } from 'react-native'
+import { View, Text, StyleSheet, FlatList, TextInput, ScrollView, Image, Dimensions, RefreshControl } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
 import { useFocusEffect } from '@react-navigation/native'
 import { Feather } from '@expo/vector-icons'
 import { useAuthStore } from '../../stores/authStore'
-import { AnimatedPressable, FadeInView, Skeleton, AnimatedListItem } from '../../components/animated'
+import { AnimatedPressable, AnimatedListItem } from '../../components/animated'
 
 const API_BASE = 'http://192.168.88.233:3001/api'
 const { width } = Dimensions.get('window')
@@ -17,6 +17,7 @@ interface Recipe {
   name: string
   category?: string
   coverImage?: string
+  difficulty?: string
 }
 
 const categories = ['全部', '家常菜', '川菜', '粤菜', '西餐', '日料', '甜点', '汤羹', '其他']
@@ -58,14 +59,12 @@ export default function RecipesScreen() {
     loadRecipes()
   }, [loadRecipes])
 
-  // 监听全局刷新信号
   useEffect(() => {
     if (recipeRefreshKey > 0) {
       loadRecipes()
     }
   }, [recipeRefreshKey, loadRecipes])
 
-  // 切换到此 tab 时刷新
   useFocusEffect(
     useCallback(() => {
       loadRecipes()
@@ -74,7 +73,7 @@ export default function RecipesScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      {/* 页面标题 */}
+      {/* 头部 */}
       <View style={styles.header}>
         <Text style={styles.title}>菜谱</Text>
         <AnimatedPressable
@@ -97,14 +96,14 @@ export default function RecipesScreen() {
             onChangeText={setSearchTerm}
           />
           {searchTerm ? (
-            <TouchableOpacity onPress={() => setSearchTerm('')}>
+            <AnimatedPressable onPress={() => setSearchTerm('')}>
               <Feather name="x" size={16} color="#a3a3a3" />
-            </TouchableOpacity>
+            </AnimatedPressable>
           ) : null}
         </View>
       </View>
 
-      {/* 分类标签 - 对齐 Web 版 */}
+      {/* 分类标签 */}
       <View style={styles.categoryContainer}>
         <ScrollView
           horizontal
@@ -130,10 +129,12 @@ export default function RecipesScreen() {
 
       {/* 菜谱列表 */}
       {loading ? (
-        <View style={styles.gridContainer}>
-          {[1, 2, 3, 4].map(i => (
-            <View key={i} style={styles.skeletonCard} />
-          ))}
+        <View style={styles.loadingContainer}>
+          <View style={styles.skeletonFeatured} />
+          <View style={styles.skeletonGrid}>
+            <View style={styles.skeletonCard} />
+            <View style={styles.skeletonCard} />
+          </View>
         </View>
       ) : filteredRecipes.length === 0 ? (
         <View style={styles.emptyState}>
@@ -153,43 +154,74 @@ export default function RecipesScreen() {
           </AnimatedPressable>
         </View>
       ) : (
-        <FlatList
-          data={filteredRecipes}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          contentContainerStyle={styles.gridContent}
-          columnWrapperStyle={styles.gridRow}
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => loadRecipes(true)}
               tintColor="#0a0a0a"
-              progressViewOffset={10}
             />
           }
-          renderItem={({ item, index }) => (
-            <AnimatedListItem index={index}>
-              <AnimatedPressable
-                style={styles.recipeCard}
-                onPress={() => router.push(`/recipes/${item.id}`)}
-              >
-                <View style={styles.recipeImage}>
-                  {item.coverImage ? (
-                    <Image source={{ uri: item.coverImage }} style={styles.recipeImg} />
-                  ) : (
-                    <Feather name="image" size={32} color="#a3a3a3" />
-                  )}
+        >
+          {/* 大卡片 - 第一个菜谱 */}
+          <AnimatedPressable
+            style={styles.featuredCard}
+            onPress={() => router.push(`/recipes/${filteredRecipes[0].id}`)}
+          >
+            <View style={styles.featuredImageContainer}>
+              {filteredRecipes[0].coverImage ? (
+                <Image source={{ uri: filteredRecipes[0].coverImage }} style={styles.featuredImage} />
+              ) : (
+                <View style={styles.featuredPlaceholder}>
+                  <Feather name="image" size={48} color="#d4d4d4" />
                 </View>
-                <View style={styles.recipeInfo}>
-                  <Text style={styles.recipeName} numberOfLines={1}>{item.name}</Text>
-                  {item.category && (
-                    <Text style={styles.recipeCategory}>{item.category}</Text>
-                  )}
-                </View>
-              </AnimatedPressable>
-            </AnimatedListItem>
+              )}
+              <LinearGradient
+                colors={['transparent', 'rgba(0,0,0,0.6)']}
+                style={styles.featuredGradient}
+              />
+              <View style={styles.featuredContent}>
+                <Text style={styles.featuredName}>{filteredRecipes[0].name}</Text>
+                {filteredRecipes[0].category && (
+                  <Text style={styles.featuredCategory}>{filteredRecipes[0].category}</Text>
+                )}
+              </View>
+            </View>
+          </AnimatedPressable>
+
+          {/* 网格列表 - 其余菜谱 */}
+          {filteredRecipes.length > 1 && (
+            <View style={styles.gridContainer}>
+              {filteredRecipes.slice(1).map((item, index) => (
+                <AnimatedPressable
+                  key={item.id}
+                  style={styles.recipeCard}
+                  onPress={() => router.push(`/recipes/${item.id}`)}
+                >
+                  <View style={styles.recipeCardInner}>
+                    <View style={styles.recipeImage}>
+                      {item.coverImage ? (
+                        <Image source={{ uri: item.coverImage }} style={styles.recipeImg} />
+                      ) : (
+                        <Feather name="image" size={32} color="#d4d4d4" />
+                      )}
+                    </View>
+                    <View style={styles.recipeInfo}>
+                      <Text style={styles.recipeName} numberOfLines={1}>{item.name}</Text>
+                      {item.category && (
+                        <Text style={styles.recipeCategory}>{item.category}</Text>
+                      )}
+                    </View>
+                  </View>
+                </AnimatedPressable>
+              ))}
+            </View>
           )}
-        />
+          <View style={{ height: 100 }} />
+        </ScrollView>
       )}
     </SafeAreaView>
   )
@@ -216,14 +248,10 @@ const styles = StyleSheet.create({
   addBtn: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: 12,
     backgroundColor: '#0a0a0a',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  addBtnPressed: {
-    transform: [{ scale: 0.95 }],
-    opacity: 0.9,
   },
   searchContainer: {
     paddingHorizontal: 24,
@@ -232,7 +260,7 @@ const styles = StyleSheet.create({
   searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 40,
+    height: 44,
     backgroundColor: '#f5f5f5',
     borderRadius: 12,
     paddingHorizontal: 16,
@@ -251,19 +279,15 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   categoryTag: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 8,
     backgroundColor: '#f5f5f5',
     alignItems: 'center',
     justifyContent: 'center',
   },
   categoryTagActive: {
     backgroundColor: '#0a0a0a',
-  },
-  categoryTagPressed: {
-    transform: [{ scale: 0.95 }],
-    opacity: 0.8,
   },
   categoryText: {
     fontSize: 13,
@@ -273,40 +297,20 @@ const styles = StyleSheet.create({
   categoryTextActive: {
     color: '#fff',
   },
-  gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: 24,
-    gap: 12,
-  },
-  skeletonCard: {
-    width: CARD_WIDTH,
-    aspectRatio: 0.8,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 16,
-  },
-  gridContent: {
-    paddingHorizontal: 24,
-    paddingBottom: 100,
-  },
-  gridRow: {
-    gap: 12,
-  },
   recipeCard: {
-    width: CARD_WIDTH,
+    width: '50%',
+    paddingHorizontal: 6,
+    marginBottom: 12,
+  },
+  recipeCardInner: {
     backgroundColor: '#f5f5f5',
     borderRadius: 16,
     overflow: 'hidden',
-    marginBottom: 12,
-  },
-  recipeCardPressed: {
-    transform: [{ scale: 0.98 }],
-    opacity: 0.9,
   },
   recipeImage: {
     width: '100%',
     aspectRatio: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#ebebeb',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -319,13 +323,29 @@ const styles = StyleSheet.create({
   },
   recipeName: {
     fontSize: 15,
-    fontWeight: '500',
+    fontWeight: '600',
     color: '#0a0a0a',
   },
+  recipeMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 4,
+  },
   recipeCategory: {
-    fontSize: 13,
-    color: '#a3a3a3',
-    marginTop: 2,
+    fontSize: 12,
+    color: '#888',
+  },
+  difficultyTag: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    backgroundColor: '#0a0a0a',
+    borderRadius: 4,
+  },
+  difficultyText: {
+    fontSize: 10,
+    fontWeight: '500',
+    color: '#fff',
   },
   emptyState: {
     flex: 1,
@@ -336,7 +356,6 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#f5f5f5',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -360,13 +379,89 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 24,
   },
-  emptyBtnPressed: {
-    transform: [{ scale: 0.98 }],
-    opacity: 0.9,
-  },
   emptyBtnText: {
     fontSize: 15,
     fontWeight: '600',
     color: '#fff',
+  },
+  // 滚动视图
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 24,
+  },
+  // 加载状态
+  loadingContainer: {
+    flex: 1,
+    paddingHorizontal: 24,
+  },
+  skeletonFeatured: {
+    width: '100%',
+    aspectRatio: 16 / 10,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 20,
+    marginBottom: 16,
+  },
+  skeletonGrid: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  skeletonCard: {
+    flex: 1,
+    aspectRatio: 0.85,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 16,
+  },
+  // 大卡片
+  featuredCard: {
+    marginBottom: 16,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  featuredImageContainer: {
+    width: '100%',
+    aspectRatio: 16 / 10,
+    backgroundColor: '#f5f5f5',
+  },
+  featuredImage: {
+    width: '100%',
+    height: '100%',
+  },
+  featuredPlaceholder: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ebebeb',
+  },
+  featuredGradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '50%',
+  },
+  featuredContent: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    bottom: 16,
+  },
+  featuredName: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  featuredCategory: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.8)',
+    marginTop: 4,
+  },
+  // 网格容器
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginHorizontal: -6,
   },
 })

@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons'
+import { useFocusEffect } from '@react-navigation/native'
 import { useAuthStore } from '../../stores/authStore'
 import { useToast, ConfirmModal } from '../../components/ui'
 import { AnimatedPressable, AnimatedCheckbox, AnimatedListItem, AnimatedBottomBar, SwipeableRow } from '../../components/animated'
@@ -124,6 +125,14 @@ export default function ShoppingScreen() {
   useEffect(() => {
     loadTodayMenu()
   }, [loadTodayMenu])
+
+  // 切换到此 tab 时刷新数据
+  useFocusEffect(
+    useCallback(() => {
+      loadItems()
+      loadTodayMenu()
+    }, [loadItems, loadTodayMenu])
+  )
 
   // AI 生成购物清单
   const generateFromRecipes = async () => {
